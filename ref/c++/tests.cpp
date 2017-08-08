@@ -35,6 +35,15 @@ static const std::string valid_checksum[] = {
     "split1checkupstagehandshakeupstreamerranterredcaperred2y9e3w",
 };
 
+static const std::string invalid_checksum[] = {
+    " 1nwldj5",
+    "\x7f""1axkwrx",
+    "an84characterslonghumanreadablepartthatcontainsthenumber1andtheexcludedcharactersbio1569pvx",
+    "pzry9x0s0muk",
+    "1pzry9x0s0muk",
+    "x1b4n0q5v",
+};
+
 struct valid_address_data {
     std::string address;
     size_t scriptPubKeyLen;
@@ -145,6 +154,13 @@ int main(void) {
             }
         }
         fail += !ok;
+    }
+    for (i = 0; i < sizeof(invalid_checksum) / sizeof(invalid_checksum[0]); ++i) {
+        std::pair<std::string, std::vector<uint8_t> > dec = bech32::decode(invalid_checksum[i]);
+        if (!dec.first.empty() || !dec.second.empty()) {
+            fprintf(stderr, "Parsed an invalid code: '%s'\n", invalid_checksum[i].c_str());
+            ++fail;
+        }
     }
     for (i = 0; i < sizeof(valid_address) / sizeof(valid_address[0]); ++i) {
         std::string hrp = "bc";
